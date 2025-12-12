@@ -4,6 +4,99 @@
         <meta charset="utf-8">
         <title>Hello World Glia</title>
 
+        <style>
+            body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                min-height: 100vh;
+                margin: 0;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+            }
+
+            .mood-container {
+                background: rgba(255, 255, 255, 0.1);
+                backdrop-filter: blur(10px);
+                border-radius: 20px;
+                padding: 40px;
+                box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+                text-align: center;
+                max-width: 500px;
+            }
+
+            h1 {
+                margin-top: 0;
+                font-size: 2em;
+            }
+
+            .mood-emoji {
+                font-size: 120px;
+                margin: 30px 0;
+                animation: bounce 0.5s;
+            }
+
+            @keyframes bounce {
+                0%, 100% { transform: translateY(0); }
+                50% { transform: translateY(-20px); }
+            }
+
+            .mood-label {
+                font-size: 24px;
+                font-weight: bold;
+                margin: 20px 0;
+                min-height: 32px;
+            }
+
+            .slider-container {
+                margin: 30px 0;
+            }
+
+            .mood-slider {
+                -webkit-appearance: none;
+                width: 100%;
+                height: 15px;
+                border-radius: 10px;
+                background: rgba(255, 255, 255, 0.3);
+                outline: none;
+                transition: background 0.3s;
+            }
+
+            .mood-slider::-webkit-slider-thumb {
+                -webkit-appearance: none;
+                appearance: none;
+                width: 30px;
+                height: 30px;
+                border-radius: 50%;
+                background: white;
+                cursor: pointer;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+                transition: transform 0.2s;
+            }
+
+            .mood-slider::-webkit-slider-thumb:hover {
+                transform: scale(1.2);
+            }
+
+            .mood-slider::-moz-range-thumb {
+                width: 30px;
+                height: 30px;
+                border-radius: 50%;
+                background: white;
+                cursor: pointer;
+                border: none;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            }
+
+            .instruction {
+                font-size: 16px;
+                opacity: 0.9;
+                margin-top: 20px;
+            }
+        </style>
+
         <script>
           window.getGliaContext = function() {
             function extractQueryParamValueFromString(paramName, urlString) {
@@ -22,8 +115,56 @@
         <script src="//api.beta.salemove.com/salemove_integration.js"></script>
     </head>
     <body>
-        <h1>
-            Beta chat
-        </h1>
+        <div class="mood-container">
+            <h1>Beta Chat</h1>
+            <h2>How's your day going?</h2>
+
+            <div class="mood-emoji" id="moodEmoji">😐</div>
+            <div class="mood-label" id="moodLabel">Meh</div>
+
+            <div class="slider-container">
+                <input type="range" min="0" max="6" value="3" class="mood-slider" id="moodSlider">
+            </div>
+
+            <p class="instruction">Drag the slider to match your vibe!</p>
+        </div>
+
+        <script>
+            const moods = [
+                { emoji: '😱', label: 'Existential Dread', message: 'Deep breaths! Let us help.' },
+                { emoji: '😞', label: 'Rather Gloomy', message: 'We are here to brighten your day!' },
+                { emoji: '😕', label: 'Slightly Bummed', message: 'Let us turn that frown around!' },
+                { emoji: '😐', label: 'Meh', message: 'Perfectly balanced, as all things should be.' },
+                { emoji: '🙂', label: 'Pretty Good', message: 'Great! Let us make it even better!' },
+                { emoji: '😄', label: 'Fantastic!', message: 'Your energy is contagious!' },
+                { emoji: '🤩', label: 'Unreasonably Happy', message: 'Living your best life! We love it!' }
+            ];
+
+            const slider = document.getElementById('moodSlider');
+            const emoji = document.getElementById('moodEmoji');
+            const label = document.getElementById('moodLabel');
+
+            function updateMood(value) {
+                const mood = moods[value];
+                emoji.textContent = mood.emoji;
+                label.textContent = mood.label;
+
+                // Trigger animation
+                emoji.style.animation = 'none';
+                setTimeout(() => {
+                    emoji.style.animation = 'bounce 0.5s';
+                }, 10);
+
+                // Store mood for potential use with chat
+                window.currentMood = mood;
+            }
+
+            slider.addEventListener('input', function() {
+                updateMood(parseInt(this.value));
+            });
+
+            // Initialize with default mood
+            updateMood(3);
+        </script>
     </body>
 </html>

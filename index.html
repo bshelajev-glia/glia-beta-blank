@@ -5,6 +5,160 @@
     <meta charset="utf-8">
     <title>Hello World Glia</title>
 
+    <style>
+      body {
+        font-family: 'Comic Sans MS', cursive, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background: #f0f0f0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+      }
+
+      .container {
+        text-align: center;
+        background: white;
+        padding: 60px;
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        max-width: 600px;
+        transition: all 0.3s ease;
+      }
+
+      h1 {
+        margin: 0 0 20px 0;
+        color: #333;
+        font-size: 2.5em;
+        transition: all 0.3s ease;
+      }
+
+      .subtitle {
+        color: #666;
+        font-size: 1.2em;
+        margin-bottom: 30px;
+      }
+
+      .hint {
+        background: #fffacd;
+        padding: 15px;
+        border-radius: 10px;
+        margin-top: 30px;
+        font-size: 0.9em;
+        color: #666;
+        border: 2px dashed #ffd700;
+      }
+
+      .secret-msg {
+        position: fixed;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 20px;
+        font-size: 14px;
+        z-index: 10000;
+        display: none;
+      }
+
+      /* Disco mode styles */
+      body.disco {
+        animation: discoBackground 0.5s infinite;
+      }
+
+      @keyframes discoBackground {
+        0% { background: #ff0000; }
+        14% { background: #ff7f00; }
+        28% { background: #ffff00; }
+        42% { background: #00ff00; }
+        57% { background: #0000ff; }
+        71% { background: #4b0082; }
+        85% { background: #9400d3; }
+        100% { background: #ff0000; }
+      }
+
+      body.disco .container {
+        animation: discoSpin 2s infinite, discoScale 1s infinite;
+        background: rgba(255, 255, 255, 0.95);
+      }
+
+      @keyframes discoSpin {
+        0% { transform: rotate(0deg); }
+        25% { transform: rotate(5deg); }
+        50% { transform: rotate(0deg); }
+        75% { transform: rotate(-5deg); }
+        100% { transform: rotate(0deg); }
+      }
+
+      @keyframes discoScale {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+      }
+
+      body.disco h1 {
+        animation: rainbowText 1s infinite, textBounce 0.5s infinite;
+      }
+
+      @keyframes rainbowText {
+        0% { color: #ff0000; text-shadow: 0 0 20px #ff0000; }
+        14% { color: #ff7f00; text-shadow: 0 0 20px #ff7f00; }
+        28% { color: #ffff00; text-shadow: 0 0 20px #ffff00; }
+        42% { color: #00ff00; text-shadow: 0 0 20px #00ff00; }
+        57% { color: #0000ff; text-shadow: 0 0 20px #0000ff; }
+        71% { color: #4b0082; text-shadow: 0 0 20px #4b0082; }
+        85% { color: #9400d3; text-shadow: 0 0 20px #9400d3; }
+        100% { color: #ff0000; text-shadow: 0 0 20px #ff0000; }
+      }
+
+      @keyframes textBounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+      }
+
+      body.disco .subtitle {
+        animation: rainbowText 1s infinite reverse;
+      }
+
+      .disco-ball {
+        position: fixed;
+        font-size: 100px;
+        animation: discoBallFloat 3s infinite ease-in-out;
+        display: none;
+        z-index: 9999;
+      }
+
+      body.disco .disco-ball {
+        display: block;
+      }
+
+      @keyframes discoBallFloat {
+        0%, 100% {
+          top: 10%;
+          left: 10%;
+          transform: rotate(0deg);
+        }
+        25% {
+          top: 20%;
+          left: 80%;
+          transform: rotate(90deg);
+        }
+        50% {
+          top: 70%;
+          left: 70%;
+          transform: rotate(180deg);
+        }
+        75% {
+          top: 60%;
+          left: 20%;
+          transform: rotate(270deg);
+        }
+      }
+    </style>
+
     <script>
       window.getGliaContext = function() {
         function extractQueryParamValueFromString(paramName, urlString) {
@@ -24,6 +178,119 @@
   </head>
 
   <body>
-    <h1>DEV: Welcome and let's have a talk!</h1>
+    <div class="container">
+      <h1>DEV: Welcome and let's have a talk!</h1>
+      <p class="subtitle">Your friendly neighborhood chat awaits...</p>
+      <p>But wait... there's something hidden here.</p>
+      <div class="hint">
+        🎮 Psst... Try entering a classic cheat code with your arrow keys!
+        <br><small>(Hint: ↑↑↓↓←→←→BA)</small>
+      </div>
+    </div>
+
+    <div class="secret-msg" id="secretMsg"></div>
+    <div class="disco-ball">🪩</div>
+
+    <script>
+      // Konami Code detector
+      const konamiCode = [
+        'ArrowUp', 'ArrowUp',
+        'ArrowDown', 'ArrowDown',
+        'ArrowLeft', 'ArrowRight',
+        'ArrowLeft', 'ArrowRight',
+        'b', 'a'
+      ];
+      let konamiIndex = 0;
+      let discoMode = false;
+
+      function showMessage(text, duration = 2000) {
+        const msg = document.getElementById('secretMsg');
+        msg.textContent = text;
+        msg.style.display = 'block';
+        setTimeout(() => {
+          msg.style.display = 'none';
+        }, duration);
+      }
+
+      document.addEventListener('keydown', function(e) {
+        const key = e.key;
+
+        // Check if the key matches the next key in the sequence
+        if (key === konamiCode[konamiIndex]) {
+          konamiIndex++;
+
+          // Show progress messages
+          if (konamiIndex === 2) {
+            showMessage('Keep going... 🎮');
+          } else if (konamiIndex === 4) {
+            showMessage('You\'re getting there! 🕹️');
+          } else if (konamiIndex === 8) {
+            showMessage('Almost... type B then A! ⌨️');
+          }
+
+          // Check if the entire code has been entered
+          if (konamiIndex === konamiCode.length) {
+            activateDiscoMode();
+            konamiIndex = 0;
+          }
+        } else {
+          // Reset if wrong key is pressed
+          if (konamiIndex > 0) {
+            showMessage('Oops! Try again from the start 😅', 1500);
+          }
+          konamiIndex = 0;
+        }
+      });
+
+      function activateDiscoMode() {
+        if (discoMode) {
+          // Deactivate disco mode
+          document.body.classList.remove('disco');
+          showMessage('💤 Disco mode deactivated. Press the code again to party!', 3000);
+          discoMode = false;
+        } else {
+          // Activate disco mode
+          document.body.classList.add('disco');
+          showMessage('🎉 DISCO MODE ACTIVATED! 🎉 LET\'S PARTY! 🕺💃', 5000);
+          discoMode = true;
+
+          // Add some floating emojis
+          createFloatingEmojis();
+        }
+      }
+
+      function createFloatingEmojis() {
+        const emojis = ['💬', '✨', '🎊', '🎉', '⭐', '💫', '🌟', '🎵', '🎶'];
+        for (let i = 0; i < 20; i++) {
+          setTimeout(() => {
+            const emoji = document.createElement('div');
+            emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+            emoji.style.position = 'fixed';
+            emoji.style.left = Math.random() * 100 + '%';
+            emoji.style.top = '-50px';
+            emoji.style.fontSize = (20 + Math.random() * 40) + 'px';
+            emoji.style.zIndex = '9998';
+            emoji.style.pointerEvents = 'none';
+            emoji.style.animation = `emojiFloat ${3 + Math.random() * 3}s linear`;
+
+            document.body.appendChild(emoji);
+
+            setTimeout(() => emoji.remove(), 6000);
+          }, i * 100);
+        }
+      }
+
+      // Add the floating emoji animation
+      const style = document.createElement('style');
+      style.textContent = `
+        @keyframes emojiFloat {
+          to {
+            transform: translateY(100vh) rotate(360deg);
+            opacity: 0;
+          }
+        }
+      `;
+      document.head.appendChild(style);
+    </script>
   </body>
 </html>

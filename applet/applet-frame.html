@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Local Network Applet</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #response {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            min-height: 50px;
+        }
+    </style>
+</head>
+<body>
+    <h3>Local Network Access Test</h3>
+    <p>Origin: <strong id="origin"></strong></p>
+    <p>Target: <code>http://localhost:3001/api/status</code></p>
+
+    <button onclick="test()">Test Request</button>
+
+    <div id="response">Ready...</div>
+
+    <script>
+        document.getElementById('origin').textContent = window.location.origin;
+
+        async function test() {
+            const response = document.getElementById('response');
+            response.textContent = 'Loading...';
+
+            try {
+                const res = await fetch('http://localhost:3001/api/status');
+                const data = await res.text();
+                response.textContent = 'SUCCESS!\n\n' + data;
+                response.style.background = '#d4edda';
+                response.style.color = '#155724';
+            } catch (error) {
+                response.textContent = 'FAILED!\n\n' + error.message;
+                response.style.background = '#f8d7da';
+                response.style.color = '#721c24';
+            }
+        }
+    </script>
+</body>
+</html>
